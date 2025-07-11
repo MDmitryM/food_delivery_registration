@@ -15,18 +15,17 @@ import (
 )
 
 func main() {
-	logrus.Println("api service")
 	logrus.SetFormatter(&logrus.TextFormatter{
 		FullTimestamp: true,
 	})
 
 	cfg := repository.PostgresCfg{ //TODO: create .env
-		Host:        os.Getenv("API_DB_HOST"),
-		Port:        os.Getenv("API_DB_PORT"),
+		Host:        os.Getenv("DB_HOST"),
+		Port:        os.Getenv("DB_PORT"),
 		PG_USER:     os.Getenv("POSTGRES_USER"),
 		PG_PASSWORD: os.Getenv("POSTGRES_PASSWORD"),
 		PG_DB:       os.Getenv("POSTGRES_DB"),
-		SSL_MODE:    os.Getenv("API_DB_SSL_MODE"),
+		SSL_MODE:    os.Getenv("DB_SSL_MODE"),
 	}
 
 	rootCtx, cancel := context.WithCancel(context.Background())
