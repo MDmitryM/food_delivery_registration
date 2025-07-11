@@ -1,4 +1,4 @@
-.PHONY: img img_push img_rm sqlc_gen
+.PHONY: img img_push img_rm sqlc
 
 IMAGE_NAME = mdmitrym/food_delivery_registration
 TAG ?= latest
@@ -12,5 +12,5 @@ img_push:
 img_rm:
 	docker image rm ${IMAGE_NAME}:${TAG}
 
-sqlc_gen:
+sqlc:
 	sqlc generate

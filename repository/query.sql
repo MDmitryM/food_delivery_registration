@@ -8,4 +8,4 @@ select * from users where id = $1;
 delete from users where id = $1;
 
 -- name: UpdateUserPwd :one
-update users set pwd_hash = $2 where id = $1
+update users set pwd_hash = $2 where id = $1 returning *;
