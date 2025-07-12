@@ -12,6 +12,7 @@ type Querier interface {
 	CreateUser(ctx context.Context, arg CreateUserParams) (int32, error)
 	DeleteUserByID(ctx context.Context, id int32) (int64, error)
 	GetUserByID(ctx context.Context, id int32) (User, error)
+	IsUserValid(ctx context.Context, login string) (User, error)
 	UpdateUserPwd(ctx context.Context, arg UpdateUserPwdParams) (User, error)
 }
 

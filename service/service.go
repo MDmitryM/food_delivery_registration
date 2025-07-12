@@ -13,6 +13,7 @@ type Servicer interface {
 	DeleteUserByID(ctx context.Context, id int32) (int64, error)
 	GetUserByID(ctx context.Context, id int32) (repository.User, error)
 	UpdateUserPwd(ctx context.Context, arg repository.UpdateUserPwdParams) (repository.User, error)
+	IsUserValid(ctx context.Context, arg models.User) (string, error)
 }
 
 type Service struct {
@@ -54,6 +55,24 @@ func (s *Service) GetUserByID(ctx context.Context, id int32) (repository.User, e
 
 func (s *Service) UpdateUserPwd(ctx context.Context, arg models.UpdateUser) (repository.User, error) {
 	return s.repo.UpdateUserPwd(ctx, repository.UpdateUserPwdParams{ID: arg.ID, PwdHash: arg.PwdHash})
+}
+
+func (s *Service) IsUserValid(ctx context.Context, arg models.User) (string, error) {
+	user, err := s.repo.IsUserValid(ctx, arg.Login)
+	if err != nil {
+		return "", err
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.PwdHash), []byte(arg.Password)); err != nil {
+		return "", err
+	}
+
+	token, err := s.GenerateToken(user.ID)
+	if err != nil {
+		return "", err
+	}
+
+	return token, nil
 }
 
 //TODO: add JWT bisness logic

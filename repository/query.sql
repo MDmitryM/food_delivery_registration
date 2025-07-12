@@ -9,3 +9,6 @@ delete from users where id = $1;
 
 -- name: UpdateUserPwd :one
 update users set pwd_hash = $2 where id = $1 returning *;
+
+-- name: IsUserValid :one
+select * from users where login = $1;

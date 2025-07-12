@@ -53,6 +53,22 @@ func (q *Queries) GetUserByID(ctx context.Context, id int32) (User, error) {
 	return i, err
 }
 
+const isUserValid = `-- name: IsUserValid :one
+select id, login, pwd_hash, created_at from users where login = $1
+`
+
+func (q *Queries) IsUserValid(ctx context.Context, login string) (User, error) {
+	row := q.db.QueryRow(ctx, isUserValid, login)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Login,
+		&i.PwdHash,
+		&i.CreatedAt,
+	)
+	return i, err
+}
+
 const updateUserPwd = `-- name: UpdateUserPwd :one
 update users set pwd_hash = $2 where id = $1 returning id, login, pwd_hash, created_at
 `

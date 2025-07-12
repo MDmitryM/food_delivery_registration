@@ -37,6 +37,7 @@ type Repository interface {
 	DeleteUserByID(ctx context.Context, id int32) (int64, error)
 	GetUserByID(ctx context.Context, id int32) (User, error)
 	UpdateUserPwd(ctx context.Context, arg UpdateUserPwdParams) (User, error)
+	IsUserValid(ctx context.Context, arg string) (User, error)
 	Close()
 }
 
@@ -120,6 +121,10 @@ func (r *postgres) GetUserByID(ctx context.Context, id int32) (User, error) {
 
 func (r *postgres) UpdateUserPwd(ctx context.Context, arg UpdateUserPwdParams) (User, error) {
 	return r.querier.UpdateUserPwd(ctx, arg)
+}
+
+func (r *postgres) IsUserValid(ctx context.Context, arg string) (User, error) {
+	return r.querier.IsUserValid(ctx, arg)
 }
 
 func (r *postgres) Close() {
