@@ -4,8 +4,11 @@ import (
 	"net/http"
 
 	"github.com/MDmitryM/food_delivery_registration/service"
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
+
+var validate = validator.New(validator.WithRequiredStructEnabled())
 
 type Handler struct {
 	service *service.Service
@@ -16,8 +19,8 @@ func NewHandler(service *service.Service) *Handler {
 }
 
 func (h *Handler) InitRoutes(app *fiber.App) {
-	app.Get("/sign-in", h.SignIn)
-	app.Get("/sign-up", h.SignUp)
+	app.Post("/sign-in", h.SignIn)
+	app.Post("/sign-up", h.SignUp)
 }
 
 func (h *Handler) SignIn(ctx *fiber.Ctx) error {

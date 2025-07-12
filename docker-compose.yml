@@ -1,1 +1,29 @@
-#TODO
+services:
+  server:
+    container_name: food_reg_serv
+    image: mdmitrym/food_delivery_registration
+    ports:
+      - 8000:8000
+    depends_on:
+      food_reg_db:
+        condition: service_healthy
+    env_file:
+       - .env
+    networks:
+      - reg_net
+    
+  food_reg_db:
+    container_name: food_reg_db
+    image: postgres
+    ports:
+      - 5432:5432
+    env_file:
+       - .env
+    healthcheck:       
+        test: ["CMD-SHELL", "pg_isready -d $$POSTGRES_DB -U $$POSTGRES_USER"]
+    networks:
+      - reg_net
+
+networks:
+  reg_net:
+    driver: bridge

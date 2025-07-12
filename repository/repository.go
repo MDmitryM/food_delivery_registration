@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/golang-migrate/migrate"
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/pgx/v5"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/sirupsen/logrus"
 )
@@ -75,15 +77,19 @@ func NewPostgresDB(ctx context.Context, cfg PostgresCfg) (Repository, error) {
 
 		m, err := migrate.New("file://migrations", migrateDSN+"&x-migrations-table=order_migrations")
 		if err != nil {
+
 			logrus.Errorf("Unable to find migrations, %v", err)
 			initErr = err
 			return
+
 		}
 
 		if err := m.Up(); err != nil {
-			logrus.Errorf("Unable to apply migrations, %v", err)
-			initErr = err
-			return
+			if err != migrate.ErrNoChange {
+				logrus.Errorf("Unable to apply migrations, %v", err)
+				initErr = err
+				return
+			}
 		}
 
 		logrus.Info("Migrations successfully applied")
