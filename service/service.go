@@ -54,7 +54,13 @@ func (s *Service) GetUserByID(ctx context.Context, id int32) (repository.User, e
 }
 
 func (s *Service) UpdateUserPwd(ctx context.Context, arg models.UpdateUser) (repository.User, error) {
-	return s.repo.UpdateUserPwd(ctx, repository.UpdateUserPwdParams{ID: arg.ID, PwdHash: arg.PwdHash})
+	hash, err := bcrypt.GenerateFromPassword([]byte(arg.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return repository.User{}, err
+	}
+	arg.Password = string(hash)
+
+	return s.repo.UpdateUserPwd(ctx, repository.UpdateUserPwdParams{ID: arg.ID, PwdHash: arg.Password})
 }
 
 func (s *Service) IsUserValid(ctx context.Context, arg models.User) (string, error) {

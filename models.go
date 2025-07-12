@@ -6,6 +6,6 @@ type User struct {
 }
 
 type UpdateUser struct {
-	ID      int32  `json:"id" validate:"required"`
-	PwdHash string `json:"pwd_hash" validate:"required"`
+	ID       int32  `json:"user_id"`
+	Password string `json:"password" validate:"required"`
 }
