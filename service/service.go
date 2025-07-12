@@ -5,10 +5,11 @@ import (
 
 	models "github.com/MDmitryM/food_delivery_registration"
 	"github.com/MDmitryM/food_delivery_registration/repository"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Servicer interface {
-	CreateUser(ctx context.Context, arg repository.CreateUserParams) (int, error)
+	CreateUser(ctx context.Context, arg repository.CreateUserParams) (int, string, error)
 	DeleteUserByID(ctx context.Context, id int32) (int64, error)
 	GetUserByID(ctx context.Context, id int32) (repository.User, error)
 	UpdateUserPwd(ctx context.Context, arg repository.UpdateUserPwdParams) (repository.User, error)
@@ -22,8 +23,25 @@ func NewService(repo repository.Repository) *Service {
 	return &Service{repo: repo}
 }
 
-func (s *Service) CreateUser(ctx context.Context, arg models.User) (int32, error) {
-	return s.repo.CreateUser(ctx, repository.CreateUserParams{Login: arg.Login, PwdHash: arg.Password})
+func (s *Service) CreateUser(ctx context.Context, arg models.User) (int32, string, error) {
+	hash, err := bcrypt.GenerateFromPassword([]byte(arg.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return 0, "", err
+	}
+
+	arg.Password = string(hash)
+
+	userID, err := s.repo.CreateUser(ctx, repository.CreateUserParams{Login: arg.Login, PwdHash: arg.Password})
+	if err != nil {
+		return 0, "", err
+	}
+
+	token, err := s.GenerateToken(userID)
+	if err != nil {
+		return 0, "", err
+	}
+
+	return userID, token, nil
 }
 
 func (s *Service) DeleteUserByID(ctx context.Context, id int32) (int64, error) {

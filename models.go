@@ -1,11 +1,11 @@
 package models
 
 type User struct {
-	Login    string `json:"login"`
-	Password string `json:"password"`
+	Login    string `json:"login" validate:"required" example:"login"`
+	Password string `json:"password" validate:"required" example:"password"`
 }
 
 type UpdateUser struct {
-	ID      int32  `json:"id"`
-	PwdHash string `json:"pwd_hash"`
+	ID      int32  `json:"id" validate:"required"`
+	PwdHash string `json:"pwd_hash" validate:"required"`
 }
