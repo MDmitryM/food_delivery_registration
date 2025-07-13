@@ -8,7 +8,7 @@ import (
 )
 
 type SignInResponce struct {
-	Token string `json:"access_token"`
+	Token string `json:"access_token" validate:"required"`
 }
 
 func (h *Handler) SignIn(ctx *fiber.Ctx) error {
@@ -52,4 +52,23 @@ func (h *Handler) SignUp(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.Status(http.StatusOK).JSON(SignUpResponce{UserID: userID, Token: token})
+}
+
+type ValidationResponce struct {
+	UserID int32 `json:"user_id"`
+}
+
+func (h *Handler) ValidateToken(ctx *fiber.Ctx) error {
+	var input SignInResponce
+
+	if err := ctx.BodyParser(&input); err != nil {
+		return SendErrorJSON(ctx, http.StatusBadRequest, err)
+	}
+
+	userID, err := h.service.ParseToken(input.Token)
+	if err != nil {
+		return SendErrorJSON(ctx, http.StatusUnauthorized, err)
+	}
+
+	return ctx.Status(http.StatusOK).JSON(ValidationResponce{userID})
 }

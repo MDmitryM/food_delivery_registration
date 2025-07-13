@@ -19,6 +19,7 @@ func NewHandler(service *service.Service) *Handler {
 func (h *Handler) InitRoutes(app *fiber.App) {
 	app.Post("/sign-in", h.SignIn)
 	app.Post("/sign-up", h.SignUp)
+	app.Post("/validate", h.ValidateToken)
 
 	authorized := app.Group("/user", h.CheckToken)
 	authorized.Get("/user-details", h.GetUserByID)
