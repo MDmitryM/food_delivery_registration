@@ -70,5 +70,10 @@ func (h *Handler) ValidateToken(ctx *fiber.Ctx) error {
 		return SendErrorJSON(ctx, http.StatusUnauthorized, err)
 	}
 
+	_, err = h.service.GetUserByID(ctx.Context(), userID)
+	if err != nil {
+		return SendErrorJSON(ctx, http.StatusUnauthorized, err)
+	}
+
 	return ctx.Status(http.StatusOK).JSON(ValidationResponce{userID})
 }
