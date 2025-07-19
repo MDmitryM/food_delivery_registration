@@ -3,7 +3,7 @@ services:
     container_name: food_reg_serv
     image: mdmitrym/food_delivery_registration
     ports:
-      - 8000:8000 #TODO брать из env
+      - 8000:8000
     depends_on:
       food_reg_db:
         condition: service_healthy
@@ -16,7 +16,7 @@ services:
     container_name: food_reg_db
     image: postgres
     ports:
-      - 5432:5432 #TODO брать из env
+      - 5432:5432
     env_file:
        - .env
     healthcheck:       

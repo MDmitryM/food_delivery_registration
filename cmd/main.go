@@ -20,8 +20,8 @@ func main() {
 	})
 
 	cfg := repository.PostgresCfg{ //TODO: create .env
-		Host:        os.Getenv("DB_HOST"),
-		Port:        os.Getenv("DB_PORT"),
+		Host:        os.Getenv("AUTH_DB_HOST"),
+		Port:        os.Getenv("AUTH_DB_PORT"),
 		PG_USER:     os.Getenv("POSTGRES_USER"),
 		PG_PASSWORD: os.Getenv("POSTGRES_PASSWORD"),
 		PG_DB:       os.Getenv("POSTGRES_DB"),
@@ -51,7 +51,7 @@ func main() {
 	handler.InitRoutes(app)
 
 	go func() {
-		if err := app.Listen(":" + os.Getenv("PORT")); err != nil {
+		if err := app.Listen(":" + os.Getenv("AUTH_PORT")); err != nil {
 			logrus.Fatalf("error while server start: %v", err.Error())
 		}
 	}()
