@@ -59,7 +59,7 @@ func (h *Handler) DeleteUserByID(ctx *fiber.Ctx) error {
 		return SendErrorJSON(ctx, http.StatusInternalServerError, err)
 	}
 	if rowsAffected == 0 {
-		return SendErrorJSON(ctx, http.StatusNotFound, err)
+		return SendErrorJSON(ctx, http.StatusNotFound, errors.New("no userID to delete"))
 	}
 	return ctx.Status(http.StatusOK).JSON(DeleteUaweResponce{"ok"})
 }
