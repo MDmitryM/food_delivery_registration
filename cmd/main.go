@@ -10,6 +10,8 @@ import (
 	"github.com/MDmitryM/food_delivery_registration/handler"
 	"github.com/MDmitryM/food_delivery_registration/repository"
 	"github.com/MDmitryM/food_delivery_registration/service"
+	"github.com/MDmitryM/food_delivery_registration/telemetry"
+	"github.com/gofiber/contrib/otelfiber/v2"
 	"github.com/gofiber/fiber/v2"
 	"github.com/sirupsen/logrus"
 )
@@ -47,6 +49,29 @@ func main() {
 		ReadTimeout:   5 * time.Second,
 		WriteTimeout:  10 * time.Second,
 	})
+
+	tracerCfg := telemetry.TracerCfg{
+		ServiceName: "food_delivery_registration",
+		JaegerUrl:   os.Getenv("JAEGER_URL"),
+		JaegerPort:  os.Getenv("JAEGER_PORT"),
+	}
+
+	tp, err := telemetry.InitTelemetry(tracerCfg)
+	if err != nil {
+		logrus.Errorf("Can`t create tracer")
+	} else {
+		logrus.Info("Successfully created new OTLP tracer")
+
+		defer func() {
+			if err := tp.Shutdown(context.Background()); err != nil {
+				logrus.Errorf("Error shutting down tracer provider, %v", err)
+			}
+		}()
+
+		app.Use(
+			otelfiber.Middleware(),
+		)
+	}
 
 	handler.InitRoutes(app)
 
